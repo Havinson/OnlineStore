@@ -2,7 +2,9 @@ package store;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,8 +29,11 @@ public class Controller extends HttpServlet {
 		super();
 	}
 
-	public void init(ServletConfig config) {
-		_store = new StoreItems();
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		ServletContext context = getServletContext();
+		context.setAttribute("storeItems", new StoreItems());
+
 		_supportMail = config.getInitParameter("email");
 		System.out.println("from init");
 	}
@@ -42,7 +47,13 @@ public class Controller extends HttpServlet {
 				ShoppingCart cart = new ShoppingCart();
 				session.setAttribute("cart", cart);
 			}
+		} else if (command.equals("clear")) {
+			HttpSession session = req.getSession();
+			ShoppingCart cart = (ShoppingCart) session.getAttribute("cart");
+			cart.clear();
 		}
-	}
+		RequestDispatcher rd = req.getRequestDispatcher("/ViewManager");
+		rd.forward(req, resp);
+	}// service
 
 }// Controller

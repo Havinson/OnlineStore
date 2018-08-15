@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 public class LoginServlet extends HttpServlet {
 
@@ -18,6 +19,10 @@ public class LoginServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession();
+		if (session != null) {
+			session.invalidate();
+		}
 		Cookie cookie = new Cookie("lastVisit", "this is the first visit");
 		// get cookies from request
 		Cookie[] cookies = req.getCookies();
